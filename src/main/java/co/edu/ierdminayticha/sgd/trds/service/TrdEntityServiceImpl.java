@@ -42,10 +42,10 @@ public class TrdEntityServiceImpl implements ITrdEntityService {
 
 	@Override
 	public TrdDto findById(Long id) {
-		
+
 		TrdEntity entity = this.repository.findById(id)
 				.orElseThrow(() -> new NoSuchElementException(String.format(NO_EXISTEN_RESOURCE_MESSAGE, id)));
-		
+
 		return createSuccessfulResponse(entity);
 	}
 
