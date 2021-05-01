@@ -3,8 +3,10 @@ package co.edu.ierdminayticha.sgd.trds.entity;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,33 +20,18 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "\"UNIDADES_DOCUMENTALES\"")
-public class DocumentaryUnitEntity {
+@Table(name = "\"SERIES\"")
+public class SerieEntity {
 
 	@Id
-	@SequenceGenerator(name = "\"SEQ_REFERENCIA_ID\"", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "\"SEQ_REFERENCIA_ID\"")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SeqSerieId")
+	@SequenceGenerator(name = "SeqSerieId", allocationSize = 1, sequenceName = "\"SEQ_SERIE_ID\"")
 	@Column(name = "\"ID\"")
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "\"ID_TIPO_UNIDAD_DOC_FK\"")
-	private DocumentaryUnitTypeEntity documentaryUnitType;
-
-	@ManyToOne
-	@JoinColumn(name = "\"ID_UNI_DOC_PADRE_FK\"")
-	private DocumentaryUnitEntity fatherDocumentaryUnit;
-
-	@ManyToOne
 	@JoinColumn(name = "\"ID_TIPO_DISPOSICION_FK\"")
 	private FinalDisposalTypeEntity finalDisposalType;
-
-	@ManyToOne
-	@JoinColumn(name = "\"ID_SECCION_FK\"")
-	private SectionEntity section;
-
-	@Column(name = "\"TIEMPO_RETENCION\"")
-	private Long retentionTime;
 
 	@ManyToOne
 	@JoinColumn(name = "\"ID_TRD_FK\"")
@@ -59,16 +46,23 @@ public class DocumentaryUnitEntity {
 	@Column(name = "\"PROCEDIMIENTO\"")
 	private String process;
 
+	@ManyToOne
+	@JoinColumn(name = "\"ID_SECCION_FK\"")
+	private SectionEntity section;
+
+	@Column(name = "\"TIEMPO_RETENCION\"")
+	private Long retentionTime;
+
 	@Column(name = "\"FECHA_CREACION\"")
 	private Date creationDate;
 
 	@Column(name = "\"FECHA_MODIFICACION\"")
 	private Date lastModifiedDate;
 
-	@OneToMany(mappedBy = "fatherDocumentaryUnit")
-	private List<DocumentaryUnitEntity> documentaryUnitList;
+	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<SubSerieEntity> subSeries;
 
-	@OneToMany(mappedBy = "documentaryUnit")
-	private List<DocumentaryTypesEntity> documentaryTypeList;
+	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<DocumentaryTypeEntity> documentaryTypeList;
 
 }

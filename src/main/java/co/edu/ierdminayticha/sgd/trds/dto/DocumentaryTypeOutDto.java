@@ -1,16 +1,15 @@
 package co.edu.ierdminayticha.sgd.trds.dto;
 
-import java.io.Serializable;
+import java.util.Date;
 
 import lombok.Data;
 
 @Data
-public class DocumentaryTypeOutDto implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class DocumentaryTypeOutDto {
 
 	private Long id;
-	private String code;
 	private String name;
+	private Date creationDate;
+	private Date lastModifiedDate;
 
 }

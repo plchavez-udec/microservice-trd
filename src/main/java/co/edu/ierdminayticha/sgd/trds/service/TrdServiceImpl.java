@@ -10,12 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import co.edu.ierdminayticha.sgd.trds.dto.TrdDto;
+import co.edu.ierdminayticha.sgd.trds.dto.TrdOutDto;
 import co.edu.ierdminayticha.sgd.trds.entity.TrdEntity;
 import co.edu.ierdminayticha.sgd.trds.exception.GeneralException;
 import co.edu.ierdminayticha.sgd.trds.repository.ITrdEntityRepository;
 
 @Service
-public class TrdEntityServiceImpl implements ITrdEntityService {
+public class TrdServiceImpl implements ITrdService {
 
 	private static final String EXISTING_RESOURCE_MESSAGE = "El recurso con version (%s) ya existe ";
 
@@ -50,7 +51,7 @@ public class TrdEntityServiceImpl implements ITrdEntityService {
 	}
 
 	@Override
-	public List<TrdDto> findAll() {
+	public List<TrdOutDto> findAll() {
 
 		Iterable<TrdEntity> entityList = this.repository.findAll();
 
@@ -111,9 +112,9 @@ public class TrdEntityServiceImpl implements ITrdEntityService {
 
 	}
 
-	private List<TrdDto> createSuccessfulResponse(Iterable<TrdEntity> entityList) {
+	private List<TrdOutDto> createSuccessfulResponse(Iterable<TrdEntity> entityList) {
 
-		List<TrdDto> dtoList = modelMapper.map(entityList, new TypeToken<List<TrdDto>>() {
+		List<TrdOutDto> dtoList = modelMapper.map(entityList, new TypeToken<List<TrdOutDto>>() {
 		}.getType());
 
 		return dtoList;

@@ -2,8 +2,10 @@ package co.edu.ierdminayticha.sgd.trds.entity;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,27 +19,32 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "\"TIPOS_DOCUMENTALES\"")
-public class DocumentaryTypesEntity {
+public class DocumentaryTypeEntity {
 
 	@Id
-	@SequenceGenerator(name = "\"SEQ_REFERENCIA_ID\"", allocationSize = 1)
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "\"SEQ_REFERENCIA_ID\"")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SeqDocumentaryType")
+	@SequenceGenerator(name = "SeqDocumentaryType", sequenceName = "\"SEQ_TIPOS_DOCUMENTALES_ID\"", allocationSize = 1)
 	@Column(name = "\"ID\"")
 	private Long id;
-
-	@ManyToOne
-	@JoinColumn(name = "\"ID_UNIDAD_DOCUMENTAL_FK\"")
-	private DocumentaryUnitEntity documentaryUnit;
-
-	@Column(name = "\"ES_ELIMINADO\"")
-	private Boolean isDeleted;
 
 	@Column(name = "\"NOMBRE\"")
 	private String name;
 
 	@Column(name = "\"FECHA_CREACION\"")
 	private Date creationDate;
+
 	@Column(name = "\"FECHA_MODIFICACION\"")
 	private Date lastModifiedDate;
+
+	@Column(name = "\"ES_ELIMINADO\"")
+	private Boolean isDeleted;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "\"ID_SERIE_FK\"")
+	private SerieEntity serie;
+
+	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinColumn(name = "\"ID_SUB_SERIE_FK\"")
+	private SubSerieEntity subSerie;
 
 }

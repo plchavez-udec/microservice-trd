@@ -33,6 +33,6 @@ public class TrdEntity {
 	@Column(name = "\"FECHA_MODIFICACION\"")
 	private Date lastModifiedDate;
 	@OneToMany(mappedBy = "trd")
-	private List<DocumentaryUnitEntity> documentaryUnitList;
+	private List<SerieEntity> series;
 
 }

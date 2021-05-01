@@ -1,5 +1,7 @@
 package co.edu.ierdminayticha.sgd.trds.api;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -10,8 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import co.edu.ierdminayticha.sgd.trds.dto.IRequestCreateTrd;
-import co.edu.ierdminayticha.sgd.trds.dto.IRequestUpdateTrd;
+import co.edu.ierdminayticha.sgd.trds.dto.IRequestUpdate;
 import co.edu.ierdminayticha.sgd.trds.dto.TrdDto;
+import co.edu.ierdminayticha.sgd.trds.dto.TrdOutDto;
 import io.swagger.annotations.Api;
 
 @Api
@@ -30,17 +33,15 @@ public interface ITrdApi {
 
 	@GetMapping(value = "", 
 				produces = MediaType.APPLICATION_JSON_VALUE)
-	ResponseEntity<?> findAll();
+	ResponseEntity<List<TrdOutDto>> findAll();
 
 	@PatchMapping(value = "/{trd-id}", 
 			 	  consumes = MediaType.APPLICATION_JSON_VALUE)
 	ResponseEntity<?> update(
 							 @PathVariable("trd-id")
 							 Long id,
-							 @Validated(IRequestUpdateTrd.class)
+							 @Validated(IRequestUpdate.class)
 					  		 @RequestBody
 							 TrdDto dto);
-
-	ResponseEntity<?> delete(Long id);
 
 }

@@ -12,15 +12,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import co.edu.ierdminayticha.sgd.trds.api.ITrdApi;
 import co.edu.ierdminayticha.sgd.trds.dto.TrdDto;
-import co.edu.ierdminayticha.sgd.trds.service.ITrdEntityService;
+import co.edu.ierdminayticha.sgd.trds.dto.TrdOutDto;
+import co.edu.ierdminayticha.sgd.trds.service.ITrdService;
 
 @RefreshScope
 @RestController
-@RequestMapping(value = "trd/v1/trd")
+@RequestMapping(value = "v1/trd")
 public class ITrdController implements ITrdApi {
 
 	@Autowired
-	private ITrdEntityService service;
+	private ITrdService service;
 
 	@Override
 	public ResponseEntity<?> create(TrdDto dto) {
@@ -32,40 +33,31 @@ public class ITrdController implements ITrdApi {
 
 	@Override
 	public ResponseEntity<?> findById(Long id) {
-		
+
 		TrdDto response = service.findById(id);
-		
+
 		return ResponseEntity.ok(response);
 	}
 
 	@Override
-	public ResponseEntity<?> findAll() {
+	public ResponseEntity<List<TrdOutDto>> findAll() {
 
-		List<TrdDto> response = service.findAll();
-		
+		List<TrdOutDto> response = service.findAll();
+
 		return ResponseEntity.ok(response);
 	}
 
 	@Override
 	public ResponseEntity<?> update(Long id, TrdDto dto) {
-		
-		service.update(id, dto);
-		
-		return ResponseEntity.noContent().build();
-	}
 
-	@Override
-	public ResponseEntity<?> delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		service.update(id, dto);
+
+		return ResponseEntity.noContent().build();
 	}
 
 	private ResponseEntity<?> buildCreationResponse(TrdDto response) {
 
-		URI uri = ServletUriComponentsBuilder
-				.fromCurrentRequest()
-				.path("/{trd-id}")
-				.buildAndExpand(response.getId())
+		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{trd-id}").buildAndExpand(response.getId())
 				.toUri();
 
 		return ResponseEntity.created(uri).body(response);
