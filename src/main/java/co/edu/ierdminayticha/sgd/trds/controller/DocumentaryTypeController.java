@@ -35,15 +35,20 @@ public class DocumentaryTypeController implements IApiDocumentaryType {
 	}
 
 	@Override
-	public ResponseEntity<List<DocumentaryTypeOutDto>> findAllBySubserie(Long idSubSerie) {
-		List<DocumentaryTypeOutDto> response = this.service.findAllBySubSerie(idSubSerie);
+	public ResponseEntity<List<DocumentaryTypeOutDto>> findAll(String tipoUnidadDocumental, Long valor) {
+		List<DocumentaryTypeOutDto> response;
+		if (tipoUnidadDocumental.equals("serie")) {
+			response = this.service.findAllBySerie(valor);
+		}else {
+			response = this.service.findAllBySubSerie(valor);
+		}		
 		return ResponseEntity.ok(response);
 	}
 
 	@Override
 	public ResponseEntity<?> update(Long id, DocumentaryTypeInDto request) {
 		this.service.update(id, request);
-		return ResponseEntity.accepted().build();
+		return ResponseEntity.noContent().build();
 	}
 
 	@Override

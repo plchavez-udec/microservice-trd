@@ -25,33 +25,25 @@ public class ITrdController implements ITrdApi {
 
 	@Override
 	public ResponseEntity<?> create(TrdDto dto) {
-
 		TrdDto response = service.create(dto);
-
 		return buildCreationResponse(response);
 	}
 
 	@Override
 	public ResponseEntity<?> findById(Long id) {
-
 		TrdDto response = service.findById(id);
-
 		return ResponseEntity.ok(response);
 	}
 
 	@Override
 	public ResponseEntity<List<TrdOutDto>> findAll() {
-
 		List<TrdOutDto> response = service.findAll();
-
 		return ResponseEntity.ok(response);
 	}
 
 	@Override
 	public ResponseEntity<?> update(Long id, TrdDto dto) {
-
 		service.update(id, dto);
-
 		return ResponseEntity.noContent().build();
 	}
 

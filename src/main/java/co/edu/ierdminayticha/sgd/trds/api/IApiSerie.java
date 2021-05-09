@@ -35,7 +35,7 @@ public interface IApiSerie {
 
 	@ApiOperation(value = "Obtener serie por Id", 
 				  response = SerieOutDto.class)
-	@GetMapping(value = "{serie-id}", 
+	@GetMapping(value = "/{serie-id}", 
 				produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SerieOutDto> findById(@PathVariable("serie-id") Long id);
 
@@ -49,7 +49,7 @@ public interface IApiSerie {
 
 	@ApiOperation(value = "Actualización de una serie", 
 				  response = SerieOutDto.class)
-	@PutMapping(value = "{serie-id}", 
+	@PutMapping(value = "/{serie-id}", 
 				  consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(@PathVariable("serie-id") Long id,
 										      @Validated(IRequestUpdateValidation.class)

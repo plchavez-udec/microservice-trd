@@ -35,7 +35,7 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 
 	@Override
 	public DocumentaryTypeOutDto create(DocumentaryTypeInDto request) {
-		log.info("create :: crear tipo documental {}", request);
+		log.info("crear tipo documental {}", request);
 		if (request.getIdSerie() != null && request.getIdSubSerie() == null) {
 			this.validateExistenceOfResourceinSerie(request.getIdSerie(), request.getName());
 		} else if (request.getIdSerie() == null && request.getIdSubSerie() != null) {
@@ -50,6 +50,15 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 		DocumentaryTypeEntity documentaryTypeEntity = this.documentaryTypeRepository.findById(id).orElseThrow(
 				() -> new NoSuchElementException("El tipo documental a la cual hace referencia no existe"));
 		return this.createSuccessfulResponse(documentaryTypeEntity);
+	}
+
+	@Override
+	public List<DocumentaryTypeOutDto> findAllBySerie(Long idSerie) {
+		SerieEntity serieEntity = this.serieRepository.findById(idSerie)
+				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
+		List<DocumentaryTypeEntity> listDocumentaryTypeEntity = this.documentaryTypeRepository
+				.findAllBySerieAndIsDeleted(serieEntity, false);
+		return createSuccessfulResponse(listDocumentaryTypeEntity);
 	}
 
 	@Override
@@ -85,7 +94,7 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 				documentaryTypeName);
 		if (documentaryTypeEntity != null) {
 			throw new GeneralException(
-					String.format("Actualmente ya existe el tipo documental con el nombre {} para la serie {}",
+					String.format("Actualmente ya existe el tipo documental con el nombre %s para la serie %s",
 							documentaryTypeName, serieEntity.getName()));
 		}
 	}
@@ -97,7 +106,7 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 				documentaryTypeName);
 		if (documentaryTypeEntity != null) {
 			throw new GeneralException(
-					String.format("Actualmente ya existe el tipo documental con el nombre {} para la sub serie {}",
+					String.format("Actualmente ya existe el tipo documental con el nombre %s para la sub serie %s",
 							documentaryTypeName, serieEntity.getName()));
 		}
 	}
@@ -112,6 +121,7 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 			documentaryTypeEntity.setSubSerie(this.subSerieRepository.findById(request.getIdSubSerie())
 					.orElseThrow(() -> new NoSuchElementException("La sub serie a la cual hace referencia no existe")));
 		}
+		documentaryTypeEntity.setIsDeleted(false);
 		documentaryTypeEntity.setCreationDate(new Date());
 		documentaryTypeEntity = this.documentaryTypeRepository.save(documentaryTypeEntity);
 		return documentaryTypeEntity;

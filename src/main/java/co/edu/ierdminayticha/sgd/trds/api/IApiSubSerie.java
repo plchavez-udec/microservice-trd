@@ -36,21 +36,21 @@ public interface IApiSubSerie {
 					@RequestBody SubSerieInDto request);
 	
 	@ApiOperation(value = "Obtener subserie por Id", 
-			  response = SerieOutDto.class)
-	@GetMapping(value = "{sub-serie-id}", 
-			produces = MediaType.APPLICATION_JSON_VALUE)
+			  	  response = SerieOutDto.class)
+	@GetMapping(value = "/{sub-serie-id}", 
+				produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<SubSerieOutDto> findById(@PathVariable("sub-serie-id") Long id);
 	
 	@ApiOperation(value = "Obtener lista de subserie", 
-			  response = ListSubSerieOutDto.class)
+			  	  response = ListSubSerieOutDto.class)
 	@GetMapping(value = "", 
-			produces = MediaType.APPLICATION_JSON_VALUE)
+				produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<SubSerieOutDto>> findAllBySerie(@QueryParam("idSerie") Long idSerie);	
 	
 	@ApiOperation(value = "Actualización de una sub serie", 
-			  response = SerieOutDto.class)
-	@PutMapping(value = "{sub-serie-id}", 
-			  consumes = MediaType.APPLICATION_JSON_VALUE)
+			  	  response = SerieOutDto.class)
+	@PutMapping(value = "/{sub-serie-id}", 
+			  	consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> update(@PathVariable("sub-serie-id") Long id,
 									      @Validated(IRequestUpdateValidation.class)
 										  @RequestBody SubSerieInDto request);

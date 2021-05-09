@@ -20,7 +20,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "\"SUBSERIE\"")
+@Table(name = "\"SUBSERIES\"")
 public class SubSerieEntity {
 
 	@Id

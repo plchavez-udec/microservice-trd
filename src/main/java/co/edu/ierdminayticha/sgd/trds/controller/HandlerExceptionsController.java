@@ -35,14 +35,10 @@ public class HandlerExceptionsController extends ResponseEntityExceptionHandler 
 
 	@ExceptionHandler({ GeneralException.class })
 	public ResponseEntity<Object> generalException(GeneralException ex, WebRequest request) {
-
 		String error = ex.getMessage();
-
 		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 				error, Arrays.asList(error));
-
 		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-
 	}
 
 	@ExceptionHandler({ NoSuchElementException.class })

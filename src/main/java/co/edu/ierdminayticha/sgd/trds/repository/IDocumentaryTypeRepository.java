@@ -13,5 +13,6 @@ import co.edu.ierdminayticha.sgd.trds.entity.SubSerieEntity;
 public interface IDocumentaryTypeRepository extends JpaRepository<DocumentaryTypeEntity, Long> {
 	DocumentaryTypeEntity findBySerieAndName(SerieEntity serie, String name);
 	DocumentaryTypeEntity findBySubSerieAndName(SubSerieEntity subSerie, String name);
+	List<DocumentaryTypeEntity> findAllBySerieAndIsDeleted(SerieEntity subSerie, Boolean isDeleted);
 	List<DocumentaryTypeEntity> findAllBySubSerieAndIsDeleted(SubSerieEntity subSerie, Boolean isDeleted);
 }

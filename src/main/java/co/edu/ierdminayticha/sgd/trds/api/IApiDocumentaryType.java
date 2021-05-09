@@ -45,8 +45,9 @@ public interface IApiDocumentaryType {
 			  response = DocumentaryTypeOutDto.class)
 	@GetMapping(value = "", 
 			produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<DocumentaryTypeOutDto>> findAllBySubserie(
-			@QueryParam("subSerie") Long idSubSerie);
+	public ResponseEntity<List<DocumentaryTypeOutDto>> findAll(
+			@QueryParam("tipoUnidadDocumental") String tipoUnidadDocumental,
+			@QueryParam("valor") Long valor);
 	
 	@ApiOperation(value = "Actualziar tipo documental")
 	@PutMapping(value = "{documentary-type-id}", 

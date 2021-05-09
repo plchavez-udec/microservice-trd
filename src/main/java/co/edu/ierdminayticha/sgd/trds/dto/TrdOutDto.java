@@ -15,6 +15,5 @@ public class TrdOutDto implements Serializable {
 	private String version;
 	private Date creationDate;
 	private Date lastModifiedDate;
-	private List<SerieOutDto> series;
 
 }
