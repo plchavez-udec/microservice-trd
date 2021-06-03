@@ -8,6 +8,6 @@ import co.edu.ierdminayticha.sgd.trds.entity.TrdEntity;
 @Repository
 public interface ITrdEntityRepository extends CrudRepository<TrdEntity, Long> {
 	
-	TrdEntity findByVersion(String version);
+	public TrdEntity findByVersion(String version);
 
 }

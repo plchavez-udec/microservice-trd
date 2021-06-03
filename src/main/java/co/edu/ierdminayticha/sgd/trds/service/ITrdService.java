@@ -7,14 +7,14 @@ import co.edu.ierdminayticha.sgd.trds.dto.TrdOutDto;
 
 public interface ITrdService {
 
-	TrdDto create(TrdDto dto);
+	public TrdDto create(TrdDto dto);
 
-	TrdDto findById(Long id);
+	public TrdDto findById(Long id);
 
-	List<TrdOutDto> findAll();
+	public List<TrdOutDto> findAll();
 
-	void update(Long id, TrdDto dto);
+	public void update(Long id, TrdDto dto);
 
-	void delete(Long id);
+	public void delete(Long id);
 
 }
