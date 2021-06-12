@@ -1,5 +1,6 @@
 package co.edu.ierdminayticha.sgd.trds.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -64,5 +65,12 @@ public class SerieEntity {
 
 	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<DocumentaryTypeEntity> documentaryTypeList;
+
+	public void addDocumentaryType(DocumentaryTypeEntity dmt) {
+		if (this.documentaryTypeList == null)
+			this.documentaryTypeList = new ArrayList<>();
+		this.documentaryTypeList.add(dmt);
+		dmt.setSerie(this);
+	}
 
 }

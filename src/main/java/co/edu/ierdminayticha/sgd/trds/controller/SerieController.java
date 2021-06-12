@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import co.edu.ierdminayticha.sgd.trds.api.IApiSerie;
+import co.edu.ierdminayticha.sgd.trds.dto.FinalDisposalTypeDto;
+import co.edu.ierdminayticha.sgd.trds.dto.SectionDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieInDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieOutDto;
 import co.edu.ierdminayticha.sgd.trds.service.ISerieService;
@@ -35,9 +37,9 @@ public class SerieController implements IApiSerie {
 	}
 
 	@Override
-	public ResponseEntity<List<SerieOutDto>> findAll(Long idTrd) {
-		List<SerieOutDto> ListSerieOutDto = this.service.findAll(idTrd);
-		return ResponseEntity.ok(ListSerieOutDto);
+	public ResponseEntity<List<SerieOutDto>> findAll(String idTrd, Long idSection) {
+		List<SerieOutDto> listSerieOutDto = this.service.findAll(Long.parseLong(idTrd), idSection);
+		return ResponseEntity.ok(listSerieOutDto);
 	}
 
 	@Override
@@ -51,5 +53,15 @@ public class SerieController implements IApiSerie {
 				.toUri();
 		return ResponseEntity.created(uri).body(response);
 
+	}
+
+	@Override
+	public ResponseEntity<List<FinalDisposalTypeDto>> findAllFinalDisposalType() {		
+		return ResponseEntity.ok(this.service.findAllFinalDisposalType());
+	}
+
+	@Override
+	public ResponseEntity<List<SectionDto>> findAllSeccions() {
+		return ResponseEntity.ok(this.service.findAllSeccions());	
 	}
 }

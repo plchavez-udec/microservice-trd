@@ -27,10 +27,15 @@ public class HandlerExceptionsController extends ResponseEntityExceptionHandler 
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
 
-		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
-				HttpStatus.INTERNAL_SERVER_ERROR, ex.getLocalizedMessage(), Arrays.asList(ex.getMessage()));
+		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), 
+										HttpStatus.INTERNAL_SERVER_ERROR.value(),
+										HttpStatus.INTERNAL_SERVER_ERROR, 
+										ex.getLocalizedMessage(), 
+										Arrays.asList(ex.getMessage()));
 
-		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
+		return new ResponseEntity<>(apiError, 
+									new HttpHeaders(), 
+									apiError.getStatus());
 	}
 
 	@ExceptionHandler({ GeneralException.class })
@@ -88,12 +93,8 @@ public class HandlerExceptionsController extends ResponseEntityExceptionHandler 
 
 		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 				ex.getLocalizedMessage(), errors);
-		
-		return super.handleExceptionInternal(
-			      ex, apiError, headers, apiError.getStatus(), request);
-	}
 
-	
-	
+		return super.handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
+	}
 
 }

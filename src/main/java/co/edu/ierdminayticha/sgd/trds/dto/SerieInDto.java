@@ -1,6 +1,7 @@
 package co.edu.ierdminayticha.sgd.trds.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -27,4 +28,7 @@ public class SerieInDto implements Serializable {
 	@NotNull(groups = {IRequestCreateValidation.class})
 	private Long section;
 	private Long retentionTime;
+	
+	@Valid
+	private List<DocumentaryTypeInDto> documentaryTypeList;
 }

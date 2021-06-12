@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import co.edu.ierdminayticha.sgd.trds.dto.FinalDisposalTypeDto;
 import co.edu.ierdminayticha.sgd.trds.dto.IRequestCreateValidation;
 import co.edu.ierdminayticha.sgd.trds.dto.IRequestUpdateValidation;
 import co.edu.ierdminayticha.sgd.trds.dto.ListSerieOutDto;
+import co.edu.ierdminayticha.sgd.trds.dto.SectionDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieInDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieOutDto;
 import io.swagger.annotations.Api;
@@ -44,7 +46,9 @@ public interface IApiSerie {
 				  response = ListSerieOutDto.class)
 	@GetMapping(value = "", 
 				produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<List<SerieOutDto>> findAll(@QueryParam("idTrd") Long idTrd);
+	public ResponseEntity<List<SerieOutDto>> findAll(
+			@QueryParam("idTrd") String idTrd,
+			@QueryParam("idSection") Long idSection);
 
 
 	@ApiOperation(value = "Actualización de una serie", 
@@ -61,5 +65,13 @@ public interface IApiSerie {
 	@DeleteMapping(value = "{usuario-id}")
 	public ResponseEntity<?> delete(Long id);
 	*/
+	
+	@GetMapping(value = "/final-disposal-type", 
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<FinalDisposalTypeDto>> findAllFinalDisposalType();
+	
+	@GetMapping(value = "/seccion", 
+			produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<SectionDto>> findAllSeccions();
 
 }

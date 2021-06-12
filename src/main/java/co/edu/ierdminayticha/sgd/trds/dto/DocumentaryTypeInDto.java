@@ -1,15 +1,17 @@
 package co.edu.ierdminayticha.sgd.trds.dto;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 
 @Data
-public class DocumentaryTypeInDto {
+public class DocumentaryTypeInDto implements Serializable{
 
-	@NotNull(groups = {IRequestCreateValidation.class, 
-					   IRequestUpdateValidation.class})
+	private static final long serialVersionUID = 1L;
+	private Long id;
+	@NotNull(groups = {IRequestCreateValidation.class})
 	private String name;
-	private Long idSerie;
-	private Long idSubSerie;
+	
 }

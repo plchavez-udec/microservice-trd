@@ -36,13 +36,17 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 	@Override
 	public DocumentaryTypeOutDto create(DocumentaryTypeInDto request) {
 		log.info("crear tipo documental {}", request);
-		if (request.getIdSerie() != null && request.getIdSubSerie() == null) {
-			this.validateExistenceOfResourceinSerie(request.getIdSerie(), request.getName());
-		} else if (request.getIdSerie() == null && request.getIdSubSerie() != null) {
-			this.validateExistenceOfResourceinSubSerie(request.getIdSubSerie(), request.getName());
-		}
-		DocumentaryTypeEntity documentaryTypeEntityOut = this.toPersist(request);
-		return this.createSuccessfulResponse(documentaryTypeEntityOut);
+		/*
+		 * if (request.getIdSerie() != null && request.getIdSubSerie() == null) {
+		 * this.validateExistenceOfResourceinSerie(request.getIdSerie(),
+		 * request.getName()); } else if (request.getIdSerie() == null &&
+		 * request.getIdSubSerie() != null) {
+		 * this.validateExistenceOfResourceinSubSerie(request.getIdSubSerie(),
+		 * request.getName()); } DocumentaryTypeEntity documentaryTypeEntityOut =
+		 * this.toPersist(request); return
+		 * this.createSuccessfulResponse(documentaryTypeEntityOut);
+		 */
+		return null;
 	}
 
 	@Override
@@ -75,7 +79,6 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 		DocumentaryTypeEntity documentaryTypeEntity = this.documentaryTypeRepository.findById(id).orElseThrow(
 				() -> new NoSuchElementException("El tipo documental a la cual hace referencia no existe"));
 		documentaryTypeEntity.setName(request.getName());
-		documentaryTypeEntity.setLastModifiedDate(new Date());
 		this.documentaryTypeRepository.save(documentaryTypeEntity);
 	}
 
@@ -112,7 +115,7 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 	}
 
 	private DocumentaryTypeEntity toPersist(DocumentaryTypeInDto request) {
-		DocumentaryTypeEntity documentaryTypeEntity = new DocumentaryTypeEntity();
+		/*DocumentaryTypeEntity documentaryTypeEntity = new DocumentaryTypeEntity();
 		documentaryTypeEntity.setName(request.getName());
 		if (request.getIdSerie() != null && request.getIdSubSerie() == null) {
 			documentaryTypeEntity.setSerie(this.serieRepository.findById(request.getIdSerie())
@@ -122,9 +125,9 @@ public class DocumentaryTypeServiceImpl implements IDocumentaryTypeService {
 					.orElseThrow(() -> new NoSuchElementException("La sub serie a la cual hace referencia no existe")));
 		}
 		documentaryTypeEntity.setIsDeleted(false);
-		documentaryTypeEntity.setCreationDate(new Date());
 		documentaryTypeEntity = this.documentaryTypeRepository.save(documentaryTypeEntity);
-		return documentaryTypeEntity;
+		return documentaryTypeEntity;*/
+		return null;
 	}
 
 	private DocumentaryTypeOutDto createSuccessfulResponse(DocumentaryTypeEntity documentaryTypeEntityOut) {

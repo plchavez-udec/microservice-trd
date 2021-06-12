@@ -1,16 +1,18 @@
 package co.edu.ierdminayticha.sgd.trds.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import co.edu.ierdminayticha.sgd.trds.dto.DocumentaryTypeInDto;
+import co.edu.ierdminayticha.sgd.trds.dto.FinalDisposalTypeDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SubSerieInDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SubSerieOutDto;
+import co.edu.ierdminayticha.sgd.trds.entity.DocumentaryTypeEntity;
 import co.edu.ierdminayticha.sgd.trds.entity.FinalDisposalTypeEntity;
 import co.edu.ierdminayticha.sgd.trds.entity.SerieEntity;
 import co.edu.ierdminayticha.sgd.trds.entity.SubSerieEntity;
@@ -30,8 +32,6 @@ public class SubSerieServiceImpl implements ISubSerieService {
 	private ISubSerieRepository subSerieRepository;
 	@Autowired
 	private IFinalDisposalTypeRepository finalDisposalTypeRepository;
-	@Autowired
-	private ModelMapper modelMapper;
 
 	@Override
 	public SubSerieOutDto create(SubSerieInDto request) {
@@ -43,15 +43,18 @@ public class SubSerieServiceImpl implements ISubSerieService {
 	@Override
 	public SubSerieOutDto findById(Long id) {
 		SubSerieEntity subSerieEntityOut = this.subSerieRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new NoSuchElementException(
+						"La serie a la cual hace referencia no existe"));
 		return this.createSuccessfulResponse(subSerieEntityOut);
 	}
 
 	@Override
 	public List<SubSerieOutDto> findAllBySerie(Long idSerie) {
 		SerieEntity serieEntity = this.serieRepository.findById(idSerie)
-				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
-		List<SubSerieEntity> listSubSerie = this.subSerieRepository.findAllBySerie(serieEntity);
+				.orElseThrow(() -> new NoSuchElementException(
+						"La serie a la cual hace referencia no existe"));
+		List<SubSerieEntity> listSubSerie = this.subSerieRepository
+												.findAllBySerie(serieEntity);
 		return this.createSuccessfulResponse(listSubSerie);
 	}
 
@@ -77,7 +80,7 @@ public class SubSerieServiceImpl implements ISubSerieService {
 		SerieEntity entity = this.subSerieRepository.findByNameAndSerie(subSerieName, serieEntityOut);
 		if (entity != null) {
 			throw new GeneralException(
-					String.format("Actualmente ya existe la sub serie con el nombre {} para la serie {}", subSerieName,
+					String.format("Actualmente ya existe la sub serie con el nombre %s para la serie %s", subSerieName,
 							serieEntityOut.getName()));
 		}
 	}
@@ -96,20 +99,46 @@ public class SubSerieServiceImpl implements ISubSerieService {
 		subSerieEntity.setProcess(request.getProcess());
 		subSerieEntity.setRetentionTime(request.getRetentionTime());
 		subSerieEntity.setCreationDate(new Date());
-		log.info("SubSerieServiceImpl :: toPersist - Sub serie a persistir: ", subSerieEntity);
-		SubSerieEntity subSerieEntityOut = this.subSerieRepository.save(subSerieEntity);
-		return subSerieEntityOut;
+		for (DocumentaryTypeInDto item : request.getDocumentaryTypeList()) {
+			DocumentaryTypeEntity dmt = new DocumentaryTypeEntity();
+			dmt.setName(item.getName());
+			dmt.setIsDeleted(Boolean.FALSE);
+			subSerieEntity.addDocumentaryType(dmt);
+		}
+		return this.subSerieRepository.save(subSerieEntity);
 	}
 
 	private SubSerieOutDto createSuccessfulResponse(SubSerieEntity subSerieEntityOut) {
-		SubSerieOutDto subSerieDtoOut = modelMapper.map(subSerieEntityOut, new TypeToken<SubSerieOutDto>() {
-		}.getType());
-		return subSerieDtoOut;
+		SubSerieOutDto response = new SubSerieOutDto();
+		response.setId(subSerieEntityOut.getId());
+		response.setCode(subSerieEntityOut.getCode());
+		response.setName(subSerieEntityOut.getName());
+		response.setProcess(subSerieEntityOut.getProcess());
+		response.setRetentionTime(subSerieEntityOut.getRetentionTime());
+		response.setCreationDate(subSerieEntityOut.getCreationDate());
+		response.setLastModifiedDate(subSerieEntityOut.getLastModifiedDate());
+		response.setFinalDisposalType(new FinalDisposalTypeDto());
+		response.getFinalDisposalType().setId(subSerieEntityOut.getFinalDisposalType().getId());
+		response.getFinalDisposalType().setName(subSerieEntityOut.getFinalDisposalType().getName());
+		response.getFinalDisposalType().setInitials(subSerieEntityOut.getFinalDisposalType().getInitials());
+		response.setDocumentaryTypeList(new ArrayList<>());
+		for (DocumentaryTypeEntity item : subSerieEntityOut.getDocumentaryTypeList()) {
+			if (Boolean.FALSE.equals(item.getIsDeleted())) {
+				DocumentaryTypeInDto itemDto = new DocumentaryTypeInDto();
+				itemDto.setId(item.getId());
+				itemDto.setName(item.getName());
+				response.getDocumentaryTypeList().add(itemDto);
+			}
+		}
+		return response;
 	}
 
 	private List<SubSerieOutDto> createSuccessfulResponse(List<SubSerieEntity> listSubSerie) {
-		List<SubSerieOutDto> listSubSerieDtoOut = modelMapper.map(listSubSerie, new TypeToken<List<SubSerieOutDto>>() {
-		}.getType());
-		return listSubSerieDtoOut;
+		List<SubSerieOutDto> response = new ArrayList<>();
+		listSubSerie.forEach(s -> {
+			SubSerieOutDto dto = this.createSuccessfulResponse(s);
+			response.add(dto);
+		});
+		return response;
 	}
 }

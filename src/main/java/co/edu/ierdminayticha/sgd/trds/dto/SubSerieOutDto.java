@@ -16,6 +16,6 @@ public class SubSerieOutDto {
 	private Long retentionTime;
 	private Date creationDate;
 	private Date lastModifiedDate;
-	private List<DocumentaryTypeOutDto> documentaryTypeList;
+	private List<DocumentaryTypeInDto> documentaryTypeList;
 
 }

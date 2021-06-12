@@ -1,7 +1,5 @@
 package co.edu.ierdminayticha.sgd.trds.entity;
 
-import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,12 +27,6 @@ public class DocumentaryTypeEntity {
 
 	@Column(name = "\"NOMBRE\"")
 	private String name;
-
-	@Column(name = "\"FECHA_CREACION\"")
-	private Date creationDate;
-
-	@Column(name = "\"FECHA_MODIFICACION\"")
-	private Date lastModifiedDate;
 
 	@Column(name = "\"ES_ELIMINADO\"")
 	private Boolean isDeleted;
