@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class SubSerieOutDto {
 
+	private Long idTrdParent;
+	private Long idSectionParent;
+	private Long idSerieParent;
 	private Long id;
 	private FinalDisposalTypeDto finalDisposalType;
 	private String code;

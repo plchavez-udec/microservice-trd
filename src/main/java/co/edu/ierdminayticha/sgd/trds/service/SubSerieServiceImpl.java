@@ -70,7 +70,15 @@ public class SubSerieServiceImpl implements ISubSerieService {
 		entity.setProcess(request.getProcess());
 		entity.setRetentionTime(request.getRetentionTime());
 		entity.setLastModifiedDate(new Date());
-		log.info("SubSerieServiceImpl :: update - Sub serie a actualziar: ", entity);
+		for (DocumentaryTypeInDto item : request.getDocumentaryTypeList()) {
+			DocumentaryTypeEntity dmt = new DocumentaryTypeEntity();
+			if (item.getId()!=null) {
+				dmt.setId(item.getId());
+			}
+			dmt.setName(item.getName());
+			dmt.setIsDeleted(Boolean.FALSE);
+			entity.addDocumentaryType(dmt);
+		}
 		this.subSerieRepository.save(entity);
 	}
 
@@ -110,6 +118,9 @@ public class SubSerieServiceImpl implements ISubSerieService {
 
 	private SubSerieOutDto createSuccessfulResponse(SubSerieEntity subSerieEntityOut) {
 		SubSerieOutDto response = new SubSerieOutDto();
+		response.setIdTrdParent(subSerieEntityOut.getSerie().getTrd().getId());
+		response.setIdSectionParent(subSerieEntityOut.getSerie().getSection().getId());
+		response.setIdSerieParent(subSerieEntityOut.getSerie().getId());
 		response.setId(subSerieEntityOut.getId());
 		response.setCode(subSerieEntityOut.getCode());
 		response.setName(subSerieEntityOut.getName());

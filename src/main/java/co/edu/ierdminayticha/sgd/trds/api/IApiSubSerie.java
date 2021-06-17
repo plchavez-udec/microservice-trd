@@ -54,19 +54,5 @@ public interface IApiSubSerie {
 	public ResponseEntity<?> update(@PathVariable("sub-serie-id") Long id,
 									      @Validated(IRequestUpdateValidation.class)
 										  @RequestBody SubSerieInDto request);
-	
-	/*
-	@ApiOperation(value = "Actualización parcial del usuario", 
-				  response = UserRequestDto.class)
-	@PatchMapping(value = "{usuario-id}", 
-				  consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> update(@PathVariable("usuario-id") Long id,
-			@Validated(IRequestUpdateValidation.class) @RequestBody UserRequestDto request);
-
-	@ApiOperation(value = "Eliminar usuario", 
-				  response = UserRequestDto.class)
-	@DeleteMapping(value = "{usuario-id}")
-	public ResponseEntity<?> delete(Long id);
-	*/
 
 }

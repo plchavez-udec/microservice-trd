@@ -2,7 +2,6 @@ package co.edu.ierdminayticha.sgd.trds.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import lombok.Data;
 
@@ -13,6 +12,7 @@ public class TrdOutDto implements Serializable {
 
 	private Long id;
 	private String version;
+	private String description;
 	private Date creationDate;
 	private Date lastModifiedDate;
 

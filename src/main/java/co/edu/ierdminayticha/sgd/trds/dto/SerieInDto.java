@@ -21,8 +21,7 @@ public class SerieInDto implements Serializable {
 	@NotNull(groups = {IRequestCreateValidation.class,
 					   IRequestUpdateValidation.class})
 	private String name;
-	@NotNull(groups = {IRequestCreateValidation.class, 
-					   IRequestUpdateValidation.class})
+	@NotNull(groups = {IRequestUpdateValidation.class})
 	private String process;
 	@Valid
 	@NotNull(groups = {IRequestCreateValidation.class})
