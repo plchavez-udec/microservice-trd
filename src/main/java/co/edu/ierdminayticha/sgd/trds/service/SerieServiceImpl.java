@@ -15,6 +15,7 @@ import co.edu.ierdminayticha.sgd.trds.dto.FinalDisposalTypeDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SectionDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieInDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieOutDto;
+import co.edu.ierdminayticha.sgd.trds.dto.TrdOutDto;
 import co.edu.ierdminayticha.sgd.trds.entity.DocumentaryTypeEntity;
 import co.edu.ierdminayticha.sgd.trds.entity.FinalDisposalTypeEntity;
 import co.edu.ierdminayticha.sgd.trds.entity.SectionEntity;
@@ -52,7 +53,8 @@ public class SerieServiceImpl implements ISerieService {
 	@Override
 	public SerieOutDto findById(Long id) {
 		SerieEntity serieEntityOut = this.serieRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new NoSuchElementException(
+						"La serie a la cual hace referencia no existe"));
 		return this.createSuccessfulResponse(serieEntityOut);
 	}
 
@@ -60,12 +62,15 @@ public class SerieServiceImpl implements ISerieService {
 	public List<SerieOutDto> findAll(Long idTrd, Long idSection) {
 		List<SerieEntity> listSerieEntityOut = new ArrayList<>();
 		TrdEntity trdEntity = this.trdRepository.findById(idTrd)
-				.orElseThrow(() -> new NoSuchElementException("La trd a la cual hace referencia no existe"));
+				.orElseThrow(() -> new NoSuchElementException(
+						"La trd a la cual hace referencia no existe"));
 		if (idSection!=null) {
-			listSerieEntityOut = this.serieRepository.findAllByTrdAndSectionOrderByCodeAsc(trdEntity,
+			listSerieEntityOut = this.serieRepository
+					.findAllByTrdAndSectionOrderByCodeAsc(trdEntity,
 					this.sectionRepository.findById(idSection).get());
 		}else {
-			listSerieEntityOut = this.serieRepository.findAllByTrdOrderByCodeAsc(trdEntity);
+			listSerieEntityOut = this.serieRepository
+					.findAllByTrdOrderByCodeAsc(trdEntity);
 		}
 		return this.createSuccessfulResponse(listSerieEntityOut);
 	}
@@ -73,11 +78,14 @@ public class SerieServiceImpl implements ISerieService {
 	@Override
 	public void update(Long id, SerieInDto request) {
 		SerieEntity serieEntity = this.serieRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new NoSuchElementException(
+						"La serie a la cual hace referencia no existe"));
 		FinalDisposalTypeEntity finalDisposalType = null;
 		if (request.getFinalDisposalType() != null) {
-			finalDisposalType = this.finalDisposalTypeRepository.findById(request.getFinalDisposalType()).orElseThrow(
-					() -> new NoSuchElementException("El tipo de disposición final al cual hace referencia no existe"));
+			finalDisposalType = this.finalDisposalTypeRepository
+					.findById(request.getFinalDisposalType()).orElseThrow(
+					() -> new NoSuchElementException(
+					"El tipo de disposición final al cual hace referencia no existe"));
 		}
 		serieEntity.setFinalDisposalType(finalDisposalType);
 		serieEntity.setCode(request.getCode());
@@ -145,6 +153,7 @@ public class SerieServiceImpl implements ISerieService {
 	private SerieOutDto createSuccessfulResponse(SerieEntity serieEntityOut) {
 		SerieOutDto response =  new SerieOutDto();
 		response.setId(serieEntityOut.getId());
+		response.setIdTrdParent(serieEntityOut.getTrd().getId());
 		response.setCode(serieEntityOut.getCode());
 		response.setName(serieEntityOut.getName());
 		response.setProcess(serieEntityOut.getProcess());
