@@ -29,33 +29,24 @@ public class SubSerieEntity {
 	@SequenceGenerator(name = "SeqSubSerieId", allocationSize = 1, sequenceName = "\"SEQ_SUB_SERIE_ID\"")
 	@Column(name = "\"ID\"")
 	private Long id;
-
 	@ManyToOne
 	@JoinColumn(name = "\"ID_TIPO_DISPOSICION_FK\"")
 	private FinalDisposalTypeEntity finalDisposalType;
-
 	@Column(name = "\"CODIGO\"")
 	private String code;
-
 	@Column(name = "\"NOMBRE\"")
 	private String name;
-
 	@Column(name = "\"PROCEDIMIENTO\"")
 	private String process;
-
 	@Column(name = "\"TIEMPO_RETENCION\"")
 	private Long retentionTime;
-
 	@Column(name = "\"FECHA_CREACION\"")
 	private Date creationDate;
-
 	@Column(name = "\"FECHA_MODIFICACION\"")
 	private Date lastModifiedDate;
-
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "\"ID_SERIE_FK\"")
 	private SerieEntity serie;
-
 	@OneToMany(mappedBy = "subSerie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<DocumentaryTypeEntity> documentaryTypeList;
 	

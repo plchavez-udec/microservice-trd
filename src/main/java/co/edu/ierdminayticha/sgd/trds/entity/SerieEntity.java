@@ -29,43 +29,32 @@ public class SerieEntity {
 	@SequenceGenerator(name = "SeqSerieId", allocationSize = 1, sequenceName = "\"SEQ_SERIE_ID\"")
 	@Column(name = "\"ID\"")
 	private Long id;
-
 	@ManyToOne
 	@JoinColumn(name = "\"ID_TIPO_DISPOSICION_FK\"")
 	private FinalDisposalTypeEntity finalDisposalType;
-
 	@ManyToOne
 	@JoinColumn(name = "\"ID_TRD_FK\"")
 	private TrdEntity trd;
-
 	@Column(name = "\"CODIGO\"")
 	private String code;
-
 	@Column(name = "\"NOMBRE\"")
 	private String name;
-
 	@Column(name = "\"PROCEDIMIENTO\"")
 	private String process;
-
 	@ManyToOne
 	@JoinColumn(name = "\"ID_SECCION_FK\"")
 	private SectionEntity section;
-
 	@Column(name = "\"TIEMPO_RETENCION\"")
 	private Long retentionTime;
-
 	@Column(name = "\"FECHA_CREACION\"")
 	private Date creationDate;
-
 	@Column(name = "\"FECHA_MODIFICACION\"")
 	private Date lastModifiedDate;
-
 	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SubSerieEntity> subSeries;
-
 	@OneToMany(mappedBy = "serie", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<DocumentaryTypeEntity> documentaryTypeList;
-
+	
 	public void addDocumentaryType(DocumentaryTypeEntity dmt) {
 		if (this.documentaryTypeList == null)
 			this.documentaryTypeList = new ArrayList<>();
