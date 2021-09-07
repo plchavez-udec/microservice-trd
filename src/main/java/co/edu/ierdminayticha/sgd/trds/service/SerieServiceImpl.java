@@ -90,7 +90,9 @@ public class SerieServiceImpl implements ISerieService {
 		serieEntity.setFinalDisposalType(finalDisposalType);
 		serieEntity.setCode(request.getCode());
 		serieEntity.setName(request.getName());
-		serieEntity.setProcess(request.getProcess());
+		if (request.getProcess()!= null) {
+			serieEntity.setProcess(request.getProcess());
+		}
 		serieEntity.setRetentionTime(request.getRetentionTime());
 		serieEntity.setLastModifiedDate(new Date());
 		if (!request.getDocumentaryTypeList().isEmpty()) {
