@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,50 +20,64 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import co.edu.ierdminayticha.sgd.trds.dto.ErrorDto;
+import co.edu.ierdminayticha.sgd.trds.entity.MessageEntity;
 import co.edu.ierdminayticha.sgd.trds.exception.GeneralException;
+import co.edu.ierdminayticha.sgd.trds.repository.IMessageRepository;
+import co.edu.ierdminayticha.sgd.trds.util.ResponseCodeConstants;
 
 @RestControllerAdvice
 public class HandlerExceptionsController extends ResponseEntityExceptionHandler {
+	
+	@Autowired
+	private IMessageRepository messageRepository;
 
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+		
+		MessageEntity message = 
+				this.messageRepository
+				.findById(ResponseCodeConstants.ERROR_TECHNICAL_TRANSACTION_PROCESSING)
+				.orElseThrow(NoSuchElementException::new);
 
 		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), 
-										HttpStatus.INTERNAL_SERVER_ERROR.value(),
-										HttpStatus.INTERNAL_SERVER_ERROR, 
-										ex.getLocalizedMessage(), 
-										Arrays.asList(ex.getMessage()));
+					HttpStatus.INTERNAL_SERVER_ERROR.value(),
+					HttpStatus.INTERNAL_SERVER_ERROR,
+					message.getCodeMessage(),
+					message.getDescripction(), 
+					Arrays.asList(ex.getMessage()));
 
-		return new ResponseEntity<>(apiError, 
-									new HttpHeaders(), 
-									apiError.getStatus());
+		return new ResponseEntity<>(apiError, new HttpHeaders(), 
+				apiError.getStatus());
 	}
 
 	@ExceptionHandler({ GeneralException.class })
-	public ResponseEntity<Object> generalException(GeneralException ex, WebRequest request) {
-		String error = ex.getMessage();
-		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
-				error, Arrays.asList(error));
-		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-	}
+	public ResponseEntity<Object> generalException(GeneralException e, 
+			WebRequest request) {
+		
+		MessageEntity message = 
+				this.messageRepository.findById(e.getMessage())
+				.orElseThrow(NoSuchElementException::new);
 
-	@ExceptionHandler({ NoSuchElementException.class })
-	public ResponseEntity<Object> noSuchElementException(NoSuchElementException ex, WebRequest request) {
-
-		String error = ex.getMessage();
-
-		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
-				error, null);
-
-		return new ResponseEntity<Object>(apiError, new HttpHeaders(), apiError.getStatus());
-
+		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), 
+				HttpStatus.BAD_REQUEST.value(), 
+				HttpStatus.BAD_REQUEST,
+				message.getCodeMessage(),
+				message.getDescripction(),
+				Arrays.asList(message.getDescripction()));
+		
+		return new ResponseEntity<>(apiError, new HttpHeaders(), apiError.getStatus());
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
+	protected ResponseEntity<Object> handleBindException(BindException ex, 
+			HttpHeaders headers, HttpStatus status,
 			WebRequest request) {
 
-		List<String> errors = new ArrayList<String>();
+		MessageEntity message = this.messageRepository
+				.findById(ResponseCodeConstants.ERROR_TECHNICAL_INPUT_FILE_VALIDATION)
+				.orElseThrow(NoSuchElementException::new);
+		
+		List<String> errors = new ArrayList<>();
 
 		for (FieldError error : ex.getBindingResult().getFieldErrors()) {
 			errors.add(error.getField() + ": " + error.getDefaultMessage());
@@ -72,16 +87,27 @@ public class HandlerExceptionsController extends ResponseEntityExceptionHandler 
 			errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
 		}
 
-		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
-				ex.getLocalizedMessage(), errors);
+		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), 
+				HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST,
+				message.getCodeMessage(),
+				message.getDescripction(), 
+				errors);
 
-		return handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
+		return handleExceptionInternal(ex, apiError, headers, 
+				apiError.getStatus(), request);
 	}
 
 	@Override
-	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-			HttpHeaders headers, HttpStatus status, WebRequest request) {
-		List<String> errors = new ArrayList<String>();
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(
+			MethodArgumentNotValidException ex, HttpHeaders headers, 
+			HttpStatus status, WebRequest request) {
+		
+		MessageEntity message = this.messageRepository
+				.findById(ResponseCodeConstants.ERROR_TECHNICAL_INPUT_FILE_VALIDATION)
+				.orElseThrow(NoSuchElementException::new);
+		
+		List<String> errors = new ArrayList<>();
 
 		for (FieldError error : ex.getBindingResult().getFieldErrors()) {
 			errors.add(error.getField() + ": " + error.getDefaultMessage());
@@ -91,10 +117,15 @@ public class HandlerExceptionsController extends ResponseEntityExceptionHandler 
 			errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
 		}
 
-		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
-				ex.getLocalizedMessage(), errors);
+		ErrorDto apiError = new ErrorDto(LocalDateTime.now(), 
+				HttpStatus.BAD_REQUEST.value(),
+				HttpStatus.BAD_REQUEST,
+				message.getCodeMessage(),
+				message.getDescripction(), 
+				errors);
 
-		return super.handleExceptionInternal(ex, apiError, headers, apiError.getStatus(), request);
+		return super.handleExceptionInternal(ex, apiError, headers, 
+				apiError.getStatus(), request);
 	}
 
 }

@@ -3,7 +3,6 @@ package co.edu.ierdminayticha.sgd.trds.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ import co.edu.ierdminayticha.sgd.trds.exception.GeneralException;
 import co.edu.ierdminayticha.sgd.trds.repository.IFinalDisposalTypeRepository;
 import co.edu.ierdminayticha.sgd.trds.repository.ISerieRepository;
 import co.edu.ierdminayticha.sgd.trds.repository.ISubSerieRepository;
+import co.edu.ierdminayticha.sgd.trds.util.ResponseCodeConstants;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -43,28 +43,34 @@ public class SubSerieServiceImpl implements ISubSerieService {
 	@Override
 	public SubSerieOutDto findById(Long id) {
 		SubSerieEntity subSerieEntityOut = this.subSerieRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException(
-						"La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SSUBERIE_NOT_EXIST));
 		return this.createSuccessfulResponse(subSerieEntityOut);
 	}
 
 	@Override
 	public List<SubSerieOutDto> findAllBySerie(Long idSerie) {
+		
 		SerieEntity serieEntity = this.serieRepository.findById(idSerie)
-				.orElseThrow(() -> new NoSuchElementException(
-						"La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SERIE_NOT_EXIST));
+		
 		List<SubSerieEntity> listSubSerie = this.subSerieRepository
-												.findAllBySerie(serieEntity);
+				.findAllBySerie(serieEntity);
+		
 		return this.createSuccessfulResponse(listSubSerie);
 	}
 
 	@Override
 	public void update(Long id, SubSerieInDto request) {
 		SubSerieEntity entity = this.subSerieRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SSUBERIE_NOT_EXIST));
+		
 		entity.setFinalDisposalType(this.finalDisposalTypeRepository.findById(request.getFinalDisposalType())
-				.orElseThrow(() -> new NoSuchElementException(
-						"El tipo de disposición final al cual hace referencia no existe")));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_FINAL_DISPOSITION_TYPE_NOT_EXIST)));
+		
 		entity.setCode(request.getCode());
 		entity.setName(request.getName());
 		entity.setProcess(request.getProcess());
@@ -83,22 +89,31 @@ public class SubSerieServiceImpl implements ISubSerieService {
 	}
 
 	private void validateExistenceOfResource(Long idSerie, String subSerieName) {
-		SerieEntity serieEntityOut = this.serieRepository.findById(idSerie)
-				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
-		SerieEntity entity = this.subSerieRepository.findByNameAndSerie(subSerieName, serieEntityOut);
+		
+		SerieEntity serieEntity = this.serieRepository.findById(idSerie)
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SERIE_NOT_EXIST));
+		
+		SerieEntity entity = this.subSerieRepository
+				.findByNameAndSerie(subSerieName, serieEntity);
+		
 		if (entity != null) {
 			throw new GeneralException(
-					String.format("Actualmente ya existe la sub serie con el nombre %s para la serie %s", subSerieName,
-							serieEntityOut.getName()));
+					ResponseCodeConstants.ERROR_BUSINESS_SUBSERIE_ALREADY_EXIST);
 		}
 	}
 
 	private SubSerieEntity toPersist(SubSerieInDto request) {
+		
 		FinalDisposalTypeEntity dinalDisposalTypeEntity = this.finalDisposalTypeRepository
-				.findById(request.getFinalDisposalType()).orElseThrow(() -> new NoSuchElementException(
-						"El tipo de disposición final al cual hace referencia no existe"));
+				.findById(request.getFinalDisposalType())
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_FINAL_DISPOSITION_TYPE_NOT_EXIST));
+		
 		SerieEntity serieEntityIn = this.serieRepository.findById(request.getIdSerie())
-				.orElseThrow(() -> new NoSuchElementException("La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SERIE_NOT_EXIST));
+		
 		SubSerieEntity subSerieEntity = new SubSerieEntity();
 		subSerieEntity.setFinalDisposalType(dinalDisposalTypeEntity);
 		subSerieEntity.setSerie(serieEntityIn);

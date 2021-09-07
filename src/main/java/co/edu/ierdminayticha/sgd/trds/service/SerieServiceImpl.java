@@ -3,7 +3,6 @@ package co.edu.ierdminayticha.sgd.trds.service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -15,7 +14,6 @@ import co.edu.ierdminayticha.sgd.trds.dto.FinalDisposalTypeDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SectionDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieInDto;
 import co.edu.ierdminayticha.sgd.trds.dto.SerieOutDto;
-import co.edu.ierdminayticha.sgd.trds.dto.TrdOutDto;
 import co.edu.ierdminayticha.sgd.trds.entity.DocumentaryTypeEntity;
 import co.edu.ierdminayticha.sgd.trds.entity.FinalDisposalTypeEntity;
 import co.edu.ierdminayticha.sgd.trds.entity.SectionEntity;
@@ -26,6 +24,7 @@ import co.edu.ierdminayticha.sgd.trds.repository.IFinalDisposalTypeRepository;
 import co.edu.ierdminayticha.sgd.trds.repository.ISectionRepository;
 import co.edu.ierdminayticha.sgd.trds.repository.ISerieRepository;
 import co.edu.ierdminayticha.sgd.trds.repository.ITrdEntityRepository;
+import co.edu.ierdminayticha.sgd.trds.util.ResponseCodeConstants;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -52,18 +51,22 @@ public class SerieServiceImpl implements ISerieService {
 
 	@Override
 	public SerieOutDto findById(Long id) {
+		
 		SerieEntity serieEntityOut = this.serieRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException(
-						"La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SERIE_NOT_EXIST));
+		
 		return this.createSuccessfulResponse(serieEntityOut);
 	}
 
 	@Override
 	public List<SerieOutDto> findAll(Long idTrd, Long idSection) {
+		
 		List<SerieEntity> listSerieEntityOut = new ArrayList<>();
 		TrdEntity trdEntity = this.trdRepository.findById(idTrd)
-				.orElseThrow(() -> new NoSuchElementException(
-						"La trd a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_TRD_NOT_EXIST));
+		
 		if (idSection!=null) {
 			listSerieEntityOut = this.serieRepository
 					.findAllByTrdAndSectionOrderByCodeAsc(trdEntity,
@@ -72,21 +75,25 @@ public class SerieServiceImpl implements ISerieService {
 			listSerieEntityOut = this.serieRepository
 					.findAllByTrdOrderByCodeAsc(trdEntity);
 		}
+		
 		return this.createSuccessfulResponse(listSerieEntityOut);
 	}
 
 	@Override
 	public void update(Long id, SerieInDto request) {
+		
 		SerieEntity serieEntity = this.serieRepository.findById(id)
-				.orElseThrow(() -> new NoSuchElementException(
-						"La serie a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SERIE_NOT_EXIST));
+		
 		FinalDisposalTypeEntity finalDisposalType = null;
 		if (request.getFinalDisposalType() != null) {
 			finalDisposalType = this.finalDisposalTypeRepository
-					.findById(request.getFinalDisposalType()).orElseThrow(
-					() -> new NoSuchElementException(
-					"El tipo de disposición final al cual hace referencia no existe"));
+					.findById(request.getFinalDisposalType())
+					.orElseThrow(() -> new GeneralException(
+							ResponseCodeConstants.ERROR_BUSINESS_FINAL_DISPOSITION_TYPE_NOT_EXIST));
 		}
+		
 		serieEntity.setFinalDisposalType(finalDisposalType);
 		serieEntity.setCode(request.getCode());
 		serieEntity.setName(request.getName());
@@ -95,6 +102,7 @@ public class SerieServiceImpl implements ISerieService {
 		}
 		serieEntity.setRetentionTime(request.getRetentionTime());
 		serieEntity.setLastModifiedDate(new Date());
+		
 		if (!request.getDocumentaryTypeList().isEmpty()) {
 			for (DocumentaryTypeInDto item : request.getDocumentaryTypeList()) {
 				DocumentaryTypeEntity dmt = new DocumentaryTypeEntity();
@@ -111,25 +119,34 @@ public class SerieServiceImpl implements ISerieService {
 
 	private void validateExistenceOfTheResource(Long idTrd, String seriesName) {
 		TrdEntity trdEntity = this.trdRepository.findById(idTrd)
-				.orElseThrow(() -> new NoSuchElementException("La trd a la cual hace referencia no existe"));
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_TRD_NOT_EXIST));
+		
 		SerieEntity entity = this.serieRepository.findByNameAndTrd(seriesName, trdEntity);
 		if (entity != null) {
-			throw new GeneralException(String.format("Actualmente ya existe la serie con el nombre %s para la trd %s",
-					seriesName, trdEntity.getVersion()));
+			throw new GeneralException(
+					ResponseCodeConstants.ERROR_BUSINESS_SERIE_ALREADY_EXIST);
 		}
 	}
 
 	private SerieEntity toPersist(SerieInDto request) {
 		FinalDisposalTypeEntity dinalDisposalTypeEntity = null;
 		if (request.getFinalDisposalType() != null) {
-			dinalDisposalTypeEntity = this.finalDisposalTypeRepository.findById(request.getFinalDisposalType())
-					.orElseThrow(() -> new NoSuchElementException(
-							"El tipo de disposición final al cual hace referencia no existe"));
+			dinalDisposalTypeEntity = this.finalDisposalTypeRepository
+					.findById(request.getFinalDisposalType())
+					.orElseThrow(() -> new GeneralException(
+							ResponseCodeConstants.ERROR_BUSINESS_FINAL_DISPOSITION_TYPE_NOT_EXIST));
 		}
-		SectionEntity sectionEntity = this.sectionRepository.findById(request.getSection()).orElseThrow(
-				() -> new NoSuchElementException("El tipo de disposición final al cual hace referencia no existe"));
-		TrdEntity trdEntity = this.trdRepository.findById(request.getIdTrd())
-				.orElseThrow(() -> new NoSuchElementException("La trd a la cual hace referencia no existe"));
+		SectionEntity sectionEntity = this.sectionRepository
+				.findById(request.getSection())
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_SECTION_NOT_EXIST));
+		
+		TrdEntity trdEntity = this.trdRepository
+				.findById(request.getIdTrd())
+				.orElseThrow(() -> new GeneralException(
+						ResponseCodeConstants.ERROR_BUSINESS_TRD_NOT_EXIST));
+		
 		SerieEntity serieEntity = new SerieEntity();
 		serieEntity.setFinalDisposalType(dinalDisposalTypeEntity);
 		serieEntity.setTrd(trdEntity);
